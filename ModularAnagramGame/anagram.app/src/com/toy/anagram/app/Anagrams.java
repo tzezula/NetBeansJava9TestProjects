@@ -30,19 +30,29 @@
 
 package com.toy.anagram.app;
 
+import com.toy.anagram.spi.CountryService;
 import com.toy.anagram.spi.WordLibrary;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.net.URI;
 import java.util.Objects;
 import java.util.ServiceLoader;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.SwingUtilities;
 
 /**
  * Main window of the Anagram Game application.
  */
 public class Anagrams extends JFrame {
+    private static final Logger LOG = Logger.getLogger(Anagrams.class.getName());
 
     public static void main(String[] args) {
         /* Set the Nimbus look and feel */
@@ -78,12 +88,17 @@ public class Anagrams extends JFrame {
 
     private int wordIdx = 0;
     private WordLibrary wordLibrary;
+    private final ServiceLoader<? extends WordLibrary> wordImpls;
+    private final ServiceLoader<? extends CountryService> countryServiceImpls;
 
     /** Creates new form Anagrams */
     public Anagrams() {
+        wordImpls = ServiceLoader.load(WordLibrary.class);
+        countryServiceImpls =  ServiceLoader.load(CountryService.class);
         initComponents();
+        lang.setRenderer(new CountryRenderer());
         initLanaguages();
-        selectWordLibrary((String)lang.getSelectedItem());
+        selectWordLibrary((CountryService.Country)lang.getSelectedItem());
         getRootPane().setDefaultButton(guessButton);
         scrambledWord.setText(wordLibrary.getScrambledWord(wordIdx));
         pack();
@@ -98,14 +113,33 @@ public class Anagrams extends JFrame {
     
     private void initLanaguages() {
         lang.removeAllItems();
-        for (WordLibrary wl : ServiceLoader.load(WordLibrary.class)) {
-            lang.addItem(wl.getLanguage());
+        for (WordLibrary wl : wordImpls) {
+            ((DefaultComboBoxModel)lang.getModel()).addElement(findCountry(wl.getLanguage()));
+        }
+        if (lang.getItemCount() > 0) {
+            lang.setSelectedIndex(0);
+        } else {
+            throw new IllegalStateException("No implementation of the WordLibrary in active modules");
         }
     }
     
-    private void selectWordLibrary(final String language) {
-        for (WordLibrary wl : ServiceLoader.load(WordLibrary.class)) {
-            if (Objects.equals(language, wl.getLanguage())) {
+    private CountryService.Country findCountry(final String id) {
+        CountryService.Country res = null;
+        for (CountryService cs : countryServiceImpls) {
+            res = cs.findCountry(id);
+            if (res != null) {
+                break;
+            }
+        }
+        if (res == null) {
+            res = new CountryService.Country(id, id, null);
+        }
+        return res;
+    }
+    
+    private void selectWordLibrary(final CountryService.Country country) {
+        for (WordLibrary wl : wordImpls) {
+            if (Objects.equals(country.getId(), wl.getLanguage())) {
                 wordLibrary = wl;
                 break;
             }
@@ -113,7 +147,7 @@ public class Anagrams extends JFrame {
         if (wordLibrary == null) {
             throw new IllegalStateException(String.format(
                     "No implementation of the WordLibrary for language %s found in active modules",
-                    language));
+                    country.getId()));
         }
     }
     
@@ -148,7 +182,6 @@ public class Anagrams extends JFrame {
                 exitForm(evt);
             }
         });
-        getContentPane().setLayout(new java.awt.BorderLayout());
 
         mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(12, 12, 12, 12));
         mainPanel.setMinimumSize(new java.awt.Dimension(297, 200));
@@ -255,6 +288,11 @@ public class Anagrams extends JFrame {
         mainPanel.add(langLabel, gridBagConstraints);
 
         lang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        lang.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                langChanged(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -329,6 +367,13 @@ public class Anagrams extends JFrame {
         System.exit(0);
     }//GEN-LAST:event_exitForm
 
+    private void langChanged(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_langChanged
+        if (wordLibrary != null) {
+            selectWordLibrary((CountryService.Country)lang.getSelectedItem());
+            nextTrialActionPerformed(evt);
+        }
+    }//GEN-LAST:event_langChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JPanel buttonsPanel;
@@ -347,4 +392,31 @@ public class Anagrams extends JFrame {
     private javax.swing.JTextField scrambledWord;
     // End of variables declaration//GEN-END:variables
 
+    private static final class CountryRenderer extends DefaultListCellRenderer {
+
+        @Override
+        public Component getListCellRendererComponent(
+                JList<?> list,
+                Object value,
+                int index,
+                boolean isSelected,
+                boolean cellHasFocus) {
+            ImageIcon icon = null;
+            if (value instanceof CountryService.Country) {
+                final CountryService.Country c = (CountryService.Country) value;
+                value = c.getDisplayName();
+                try {
+                    final URI iconUri = c.getIcon();
+                    if (iconUri != null) {
+                        icon = new ImageIcon(iconUri.toURL());
+                    }
+                } catch (IOException ioe) {
+                    LOG.warning(ioe.getMessage());
+                }
+            }
+            Component res = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            this.setIcon(icon);
+            return res;
+        }
+    }
 }
