@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-module AnagramGameGermanWords {
+module anagram.lang.de {
     requires anagram.spi;
     requires anagram.util;
     provides com.toy.anagram.spi.WordLibrary with anagram.lang.de.GermanWords;
