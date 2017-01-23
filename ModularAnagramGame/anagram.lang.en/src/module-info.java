@@ -26,4 +26,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
+module anagram.lang.en {
+    requires anagram.spi;
+    provides com.toy.anagram.spi.WordLibrary with com.toy.anagram.lang.en.EnglishWords;
+}

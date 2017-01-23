@@ -26,4 +26,11 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
+package com.toy.anagram.spi;
+
+public interface WordLibrary {
+    String getLanguage();    
+    String getWord(int index);
+    String getScrambledWord(int index);
+    int getSize();
+}
