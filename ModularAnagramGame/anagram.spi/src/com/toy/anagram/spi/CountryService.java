@@ -26,10 +26,64 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-module anagram.app {
-    requires java.logging;
-    requires java.desktop;
-    requires anagram.spi;
-    uses com.toy.anagram.spi.WordLibrary;
-    uses com.toy.anagram.spi.CountryService;
+package com.toy.anagram.spi;
+
+import java.net.URI;
+import java.util.Objects;
+
+public interface CountryService {
+
+    public final class Country {
+        private final String id;
+        private final String displayName;
+        private final URI icon;
+        
+        public Country (
+                final String id,
+                final String displayName,
+                final URI icon) {
+            this.id = id;
+            this.displayName = displayName;
+            this.icon = icon;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public URI getIcon() {
+            return icon;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 89 * hash + Objects.hashCode(this.id);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final Country other = (Country) obj;
+            if (!Objects.equals(this.id, other.id)) {
+                return false;
+            }
+            return true;
+        }
+    }
+    
+    Country findCountry(final String id);
 }

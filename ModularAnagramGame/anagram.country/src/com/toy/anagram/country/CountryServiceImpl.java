@@ -26,10 +26,15 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-module anagram.app {
-    requires java.logging;
-    requires java.desktop;
-    requires anagram.spi;
-    uses com.toy.anagram.spi.WordLibrary;
-    uses com.toy.anagram.spi.CountryService;
+package com.toy.anagram.country;
+
+import com.toy.anagram.spi.CountryService;
+
+public class CountryServiceImpl implements CountryService {
+
+    @Override
+    public Country findCountry(String id) {
+        return null;
+    }
+    
 }
