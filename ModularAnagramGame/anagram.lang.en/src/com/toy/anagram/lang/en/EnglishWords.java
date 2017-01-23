@@ -29,6 +29,9 @@
 package com.toy.anagram.lang.en;
 
 import com.toy.anagram.spi.WordLibrary;
+import com.toy.anagram.spi.support.WordScrambler;
+import java.util.Random;
+import java.util.function.Function;
 
 
 public final class EnglishWords implements WordLibrary {
@@ -78,55 +81,23 @@ public final class EnglishWords implements WordLibrary {
         "hotjava",
         "vertex",
         "unsigned",
-        "traditional"};
+        "traditional"};   
     
-    private static final String[] SCRAMBLED_WORD_LIST = {
-        "batsartcoin",
-        "maibuguos",
-        "ratimhteci",
-        "abkclssha",
-        "ibmtpa",
-        "iccrmutsnaec",
-        "ocbmnitaoni",
-        "ocsnqeeutnyl",
-        "ocsnroitmu",
-        "edrcmeneitgn",
-        "edepdnneyc",
-        "idasbmgiauet",
-        "ydanicm",
-        "neacsplutaoni",
-        "qeiuaveltn",
-        "xerpseisno",
-        "aficilatet",
-        "rfgaemtn",
-        "ehaxedicalm",
-        "milpmeneatitno",
-        "niidtsniugsiahleb",
-        "niehiratcen",
-        "nietnret",
-        "ajav",
-        "olacilazitno",
-        "imrcpoorecssro",
-        "anivagitno",
-        "poitimazitno",
-        "aparemert",
-        "aprtcki",
-        "ipkcel",
-        "opylomprich",
-        "irogorsuyl",
-        "isumtlnaoesuyl",
-        "psceficitaoni",
-        "tsurtcreu",
-        "elixalc",
-        "ilekiwse",
-        "amanegemtn",
-        "aminupalet",
-        "amhtmetacsi",
-        "ohjtvaa",
-        "evtrxe",
-        "nuisngde",
-        "rtdatioialn"
-    };
+    private final Function<String,String> mapFnc;
+    
+    public EnglishWords() {
+        this(new Function<String,String> () {
+            private final WordScrambler ws = WordScrambler.newInstance(new Random());
+            @Override
+            public String apply(final String str) {
+                return ws.scramble(str);
+            }
+        });
+    }
+    
+    /*test*/ EnglishWords(final Function<String,String> f) {
+        this.mapFnc = f;
+    }
     
     @Override
     public String getLanguage() {
@@ -140,7 +111,7 @@ public final class EnglishWords implements WordLibrary {
 
     @Override
     public String getScrambledWord(int idx) {
-        return SCRAMBLED_WORD_LIST[idx];
+        return mapFnc.apply(getWord(idx));
     }
 
     @Override

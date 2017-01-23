@@ -26,8 +26,27 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-module anagram.lang.en {
-    requires anagram.spi;
-    requires anagram.util;
-    provides com.toy.anagram.spi.WordLibrary with com.toy.anagram.lang.en.EnglishWords;
+package com.toy.anagram.lang.en;
+
+import java.util.function.Function;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+
+public class EnglishWordsTest {
+    
+    public EnglishWordsTest() {
+    }
+    
+    @Test
+    public void testWords() {
+        final EnglishWords en = new EnglishWords(Function.identity());
+        for (int i = 0; i < en.getSize(); i++) {
+            final String w = en.getWord(i);
+            assertNotNull(w);
+            final String s = en.getScrambledWord(i);
+            assertEquals(w, s);
+        }
+        
+    }    
 }

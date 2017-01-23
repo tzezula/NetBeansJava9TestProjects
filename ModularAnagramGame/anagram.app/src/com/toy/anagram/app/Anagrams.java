@@ -34,6 +34,7 @@ import com.toy.anagram.spi.WordLibrary;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.util.Objects;
 import java.util.ServiceLoader;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -80,8 +81,9 @@ public class Anagrams extends JFrame {
 
     /** Creates new form Anagrams */
     public Anagrams() {
-        selectWordLibrary(null);
         initComponents();
+        initLanaguages();
+        selectWordLibrary((String)lang.getSelectedItem());
         getRootPane().setDefaultButton(guessButton);
         scrambledWord.setText(wordLibrary.getScrambledWord(wordIdx));
         pack();
@@ -94,15 +96,24 @@ public class Anagrams extends JFrame {
     }
     
     
+    private void initLanaguages() {
+        lang.removeAllItems();
+        for (WordLibrary wl : ServiceLoader.load(WordLibrary.class)) {
+            lang.addItem(wl.getLanguage());
+        }
+    }
+    
     private void selectWordLibrary(final String language) {
         for (WordLibrary wl : ServiceLoader.load(WordLibrary.class)) {
-            if (language == null || language.equals(wl.getLanguage())) {
+            if (Objects.equals(language, wl.getLanguage())) {
                 wordLibrary = wl;
                 break;
             }
         }
         if (wordLibrary == null) {
-            throw new IllegalStateException("No implementation of the WordLibrary in active modules");
+            throw new IllegalStateException(String.format(
+                    "No implementation of the WordLibrary for language %s found in active modules",
+                    language));
         }
     }
     
@@ -124,6 +135,8 @@ public class Anagrams extends JFrame {
         buttonsPanel = new javax.swing.JPanel();
         guessButton = new javax.swing.JButton();
         nextTrial = new javax.swing.JButton();
+        langLabel = new javax.swing.JLabel();
+        lang = new javax.swing.JComboBox<>();
         mainMenu = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -135,6 +148,7 @@ public class Anagrams extends JFrame {
                 exitForm(evt);
             }
         });
+        getContentPane().setLayout(new java.awt.BorderLayout());
 
         mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(12, 12, 12, 12));
         mainPanel.setMinimumSize(new java.awt.Dimension(297, 200));
@@ -142,14 +156,18 @@ public class Anagrams extends JFrame {
 
         scrambledLabel.setText("Scrambled Word:");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 12, 6);
         mainPanel.add(scrambledLabel, gridBagConstraints);
 
-        scrambledWord.setColumns(20);
         scrambledWord.setEditable(false);
+        scrambledWord.setColumns(20);
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
@@ -160,6 +178,8 @@ public class Anagrams extends JFrame {
         guessLabel.setLabelFor(guessedWord);
         guessLabel.setText("Your Guess:");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 20, 6);
@@ -167,6 +187,8 @@ public class Anagrams extends JFrame {
 
         guessedWord.setColumns(20);
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
@@ -221,6 +243,25 @@ public class Anagrams extends JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weighty = 1.0;
         mainPanel.add(buttonsPanel, gridBagConstraints);
+
+        langLabel.setLabelFor(lang);
+        langLabel.setText("Language:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 12, 6);
+        mainPanel.add(langLabel, gridBagConstraints);
+
+        lang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 12, 0);
+        mainPanel.add(lang, gridBagConstraints);
 
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
@@ -297,6 +338,8 @@ public class Anagrams extends JFrame {
     private javax.swing.JButton guessButton;
     private javax.swing.JLabel guessLabel;
     private javax.swing.JTextField guessedWord;
+    private javax.swing.JComboBox<String> lang;
+    private javax.swing.JLabel langLabel;
     private javax.swing.JMenuBar mainMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JButton nextTrial;

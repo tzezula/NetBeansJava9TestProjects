@@ -26,8 +26,31 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-module anagram.lang.en {
-    requires anagram.spi;
-    requires anagram.util;
-    provides com.toy.anagram.spi.WordLibrary with com.toy.anagram.lang.en.EnglishWords;
+package com.toy.anagram.spi.support;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
+public class WordScrambler {
+    private final Random rnd;
+    
+    private WordScrambler(final Random rnd) {
+        this.rnd = rnd;
+    }
+    
+    public String scramble(String word) {
+        final List<Character> chars = word.chars()
+                .mapToObj((c) -> (char)c)
+                .collect(Collectors.toList());
+        Collections.shuffle(chars, this.rnd);
+        return chars.stream()
+                .map(Object::toString)
+                .collect(Collectors.joining());
+    }
+    
+    public static WordScrambler newInstance(final Random rnd) {
+        return new WordScrambler(rnd);
+    }
 }
