@@ -29,11 +29,40 @@
 package com.toy.anagram.country;
 
 import com.toy.anagram.spi.CountryService;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Properties;
 
 public class CountryServiceImpl implements CountryService {
+    private static final String URL_TEMPLATE = 
+            "https://raw.githubusercontent.com/tzezula/NetBeansJava9TestProjects/master/resources/countries/%s/%s";
+    private static final String DESCRIPTOR = "Bundle.properties";
+    private static final String KEY_NAME = "NAME";
+    private static final String KEY_ICON = "ICON";
 
     @Override
     public Country findCountry(String id) {
+        try {
+            final URL url = new URL(String.format(URL_TEMPLATE, id, DESCRIPTOR));
+            try (InputStream in = url.openStream()) {
+                final Properties props = new Properties();
+                props.load(in);
+                final String displayName = props.getProperty(KEY_NAME);
+                if (displayName != null) {                    
+                    final String icon = props.getProperty(KEY_ICON);
+                    return new Country(
+                            id,
+                            displayName,
+                            icon == null ?
+                                    null :
+                                    new URL(String.format(URL_TEMPLATE, id, icon)).toURI());
+                }
+            }
+        } catch (IOException | URISyntaxException ex) {
+            //pass
+        }
         return null;
     }
     
