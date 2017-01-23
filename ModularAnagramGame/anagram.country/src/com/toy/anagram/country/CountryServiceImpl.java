@@ -29,15 +29,27 @@
 package com.toy.anagram.country;
 
 import com.toy.anagram.spi.CountryService;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Properties;
 
 public class CountryServiceImpl implements CountryService {
-    private static final String URL_TEMPLATE = 
-            "https://raw.githubusercontent.com/tzezula/NetBeansJava9TestProjects/master/resources/countries/%s/%s";
+    private static final String URL_TEMPLATE;
+    static {
+        //URL_TEMPLATE = "https://raw.githubusercontent.com/tzezula/NetBeansJava9TestProjects/master/resources/countries/%s/%s";
+        try {
+            final URL base = new File(new File(
+                    System.getProperty("user.dir")).getParentFile().getParentFile(),
+                    "resources/countries").toURI().toURL();
+            URL_TEMPLATE = base.toString() + "%s/%s";
+        } catch (MalformedURLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
     private static final String DESCRIPTOR = "Bundle.properties";
     private static final String KEY_NAME = "NAME";
     private static final String KEY_ICON = "ICON";
