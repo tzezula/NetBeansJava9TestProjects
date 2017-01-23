@@ -28,9 +28,14 @@
  */
 package com.toy.anagram.spi;
 
+import org.netbeans.api.annotations.common.NonNull;
+
 public interface WordLibrary {
+    @NonNull
     String getLanguage();    
+    @NonNull
     String getWord(int index);
+    @NonNull
     String getScrambledWord(int index);
     int getSize();
 }

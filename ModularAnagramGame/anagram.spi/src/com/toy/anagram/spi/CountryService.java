@@ -30,6 +30,9 @@ package com.toy.anagram.spi;
 
 import java.net.URI;
 import java.util.Objects;
+import org.netbeans.api.annotations.common.CheckForNull;
+import org.netbeans.api.annotations.common.NonNull;
+import org.netbeans.api.annotations.common.NullAllowed;
 
 public interface CountryService {
 
@@ -39,22 +42,25 @@ public interface CountryService {
         private final URI icon;
         
         public Country (
-                final String id,
-                final String displayName,
-                final URI icon) {
+                @NonNull final String id,
+                @NonNull final String displayName,
+                @NullAllowed final URI icon) {
             this.id = id;
             this.displayName = displayName;
             this.icon = icon;
         }
 
+        @NonNull
         public String getId() {
             return id;
         }
 
+        @NonNull
         public String getDisplayName() {
             return displayName;
         }
 
+        @CheckForNull
         public URI getIcon() {
             return icon;
         }
@@ -67,7 +73,7 @@ public interface CountryService {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(@NullAllowed final Object obj) {
             if (this == obj) {
                 return true;
             }
@@ -85,5 +91,6 @@ public interface CountryService {
         }
     }
     
-    Country findCountry(final String id);
+    @CheckForNull
+    Country findCountry(@NonNull String id);
 }

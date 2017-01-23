@@ -27,5 +27,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 module anagram.spi {
+    requires static common.annotations;
     exports com.toy.anagram.spi;
 }
