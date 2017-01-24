@@ -39,14 +39,17 @@ public interface CountryService {
     public final class Country {
         private final String id;
         private final String displayName;
+        private final String lang;
         private final URI icon;
         
         public Country (
                 @NonNull final String id,
                 @NonNull final String displayName,
+                @NonNull final String lang,
                 @NullAllowed final URI icon) {
             this.id = id;
             this.displayName = displayName;
+            this.lang = lang;
             this.icon = icon;
         }
 
@@ -58,6 +61,11 @@ public interface CountryService {
         @NonNull
         public String getDisplayName() {
             return displayName;
+        }
+
+        @NonNull
+        public String getLang() {
+            return lang;
         }
 
         @CheckForNull

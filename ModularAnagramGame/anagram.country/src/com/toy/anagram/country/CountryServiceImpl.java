@@ -52,6 +52,7 @@ public class CountryServiceImpl implements CountryService {
     }
     private static final String DESCRIPTOR = "Bundle.properties";
     private static final String KEY_NAME = "NAME";
+    private static final String KEY_LANG = "LANG";
     private static final String KEY_ICON = "ICON";
 
     @Override
@@ -61,16 +62,22 @@ public class CountryServiceImpl implements CountryService {
             try (InputStream in = url.openStream()) {
                 final Properties props = new Properties();
                 props.load(in);
-                final String displayName = props.getProperty(KEY_NAME);
-                if (displayName != null) {                    
-                    final String icon = props.getProperty(KEY_ICON);
-                    return new Country(
-                            id,
-                            displayName,
-                            icon == null ?
-                                    null :
-                                    new URL(String.format(URL_TEMPLATE, id, icon)).toURI());
+                String displayName = props.getProperty(KEY_NAME);
+                if (displayName == null) {
+                    displayName = id;
                 }
+                String lang = props.getProperty(KEY_LANG);
+                if (lang == null) {
+                    lang = id;
+                }
+                final String icon = props.getProperty(KEY_ICON);
+                return new Country(
+                        id,
+                        displayName,
+                        lang,
+                        icon == null ?
+                                null :
+                                new URL(String.format(URL_TEMPLATE, id, icon)).toURI());
             }
         } catch (IOException | URISyntaxException ex) {
             //pass

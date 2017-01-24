@@ -133,7 +133,7 @@ public class Anagrams extends JFrame {
             }
         }
         if (res == null) {
-            res = new CountryService.Country(id, id, null);
+            res = new CountryService.Country(id, id, id, null);
         }
         return res;
     }
@@ -413,7 +413,7 @@ public class Anagrams extends JFrame {
             ImageIcon icon = null;
             if (value instanceof CountryService.Country) {
                 final CountryService.Country c = (CountryService.Country) value;
-                value = c.getDisplayName();
+                value = c.getLang();
                 try {
                     final URI iconUri = c.getIcon();
                     if (iconUri != null) {
