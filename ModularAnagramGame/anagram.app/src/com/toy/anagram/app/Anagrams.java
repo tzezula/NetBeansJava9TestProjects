@@ -53,7 +53,8 @@ import javax.swing.SwingUtilities;
  */
 public class Anagrams extends JFrame {
     private static final Logger LOG = Logger.getLogger(Anagrams.class.getName());
-
+    public static Anagrams instance;
+    
     public static void main(String[] args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -81,7 +82,7 @@ public class Anagrams extends JFrame {
         /* Create and display the form */
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new Anagrams().setVisible(true);
+                (instance = new Anagrams()).setVisible(true);
             }
         });
     }
@@ -123,7 +124,7 @@ public class Anagrams extends JFrame {
         }
     }
     
-    private CountryService.Country findCountry(final String id) {
+    public CountryService.Country findCountry(final String id) {
         CountryService.Country res = null;
         for (CountryService cs : countryServiceImpls) {
             res = cs.findCountry(id);
@@ -137,7 +138,7 @@ public class Anagrams extends JFrame {
         return res;
     }
     
-    private void selectWordLibrary(final CountryService.Country country) {
+    public void selectWordLibrary(final CountryService.Country country) {
         for (WordLibrary wl : wordImpls) {
             if (Objects.equals(country.getId(), wl.getLanguage())) {
                 wordLibrary = wl;
@@ -335,6 +336,10 @@ public class Anagrams extends JFrame {
         new About(this).setVisible(true);
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
+    public void nextAction() {
+        nextTrialActionPerformed(null);
+    }
+    
     private void nextTrialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextTrialActionPerformed
         wordIdx = (wordIdx + 1) % wordLibrary.getSize();
 
@@ -350,6 +355,10 @@ public class Anagrams extends JFrame {
         System.exit(0);
     }//GEN-LAST:event_exitMenuItemActionPerformed
 
+    public void setGuessedWord(String word) {
+        guessedWord.setText(word);
+    }
+    
     private void guessedWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guessedWordActionPerformed
         final String expected = wordLibrary.getWord(wordIdx);
         if (expected.equals(guessedWord.getText())) {
