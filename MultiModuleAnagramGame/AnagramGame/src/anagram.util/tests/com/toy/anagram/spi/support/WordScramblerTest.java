@@ -18,9 +18,11 @@ import static org.junit.Assert.*;
  */
 public class WordScramblerTest {
     
+    WordScrambler ws;
+
     public WordScramblerTest() {
     }
-    
+     
     @BeforeClass
     public static void setUpClass() {
     }
