@@ -255,7 +255,9 @@ is divided into following sections:
                         <replaceregex pattern="([^@{separator}]*)\Q@{separator}\E.*" replace="\1"/>
                     </filterchain>
                 </loadresource>
-                <call unless:blank="@{paths}"/>
+                <sequential if:set="entry">
+                    <call/>
+                </sequential>
                 <condition else="false" property="moreElements" value="true">
                     <contains string="@{paths}" substring="@{separator}"/>
                 </condition>

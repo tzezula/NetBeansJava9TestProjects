@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  * @author tom
  */
 public class WordScramblerTest {
-    
+     
     WordScrambler ws;
 
     public WordScramblerTest() {
