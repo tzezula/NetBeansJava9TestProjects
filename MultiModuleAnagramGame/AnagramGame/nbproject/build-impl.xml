@@ -467,8 +467,8 @@ is divided into following sections:
                         <batchtest todir="${build.test.results.dir}">
                             <mappedresources>
                                 <union>
-                                    <fileset dir="${test.src.dir}" excludes="@{excludes},${excludes}" includes="@{includes}">
-                                        <filename name="@{testincludes}"/>
+                                    <fileset dir="${test.src.dir}" excludes="@{excludes},${excludes}" includes="**/@{includes}">
+                                        <filename name="**/@{testincludes}"/>
                                         <filename regex="${have.tests.test.src.dir.regexp}"/>
                                     </fileset>
                                 </union>
